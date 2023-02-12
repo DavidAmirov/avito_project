@@ -1,0 +1,7 @@
+{% extends 'layout/basic.html' %}
+{% block title %}Ошибка активации{% endblock %}
+{% vlock content %}
+<h2>Активация</h2>
+<p>Активация пользователя с таким именем прошла неудачно.</p>
+<p><a href="{% url 'main:register' %}">Зарегестрироваться повторно</a></p>
+{% endblock %}
