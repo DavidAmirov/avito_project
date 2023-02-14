@@ -19,9 +19,12 @@ from .forms import *
 from .utilites import signer
 
 def index(request):
+    """Функция-контроллер главной страницы"""
     return render(request, 'main/index.html')
 
 def other_page(request, page):
+    """Функция-контроллер прочих страниц,
+    название шаблона ищется по параметру page"""
     try:
         template = get_template('main/' + page + '.html')
     except TemplateDoesNotExist:
@@ -30,14 +33,19 @@ def other_page(request, page):
 
 
 class AvitoLoginView(LoginView):
+    """Класс контроллер авторизации"""
     template_name = 'main/login.html'
 
 
 class AvitoLogoutView(LoginRequiredMixin, LogoutView):
+    """Класс-контроллер выхода с сайта"""
     template_name = 'main/logout.html'
 
 
 class ChangeUserInfoVIew(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    """Класс-контроллер изменения личных данных.
+    В методе setup() добавляем атрибут User_id,
+    который понадобится при извлечении объекта."""
     model = AdvUser
     template_name = 'main/change_user_info.html'
     form_class = ChangeUserInfoForm
@@ -55,16 +63,19 @@ class ChangeUserInfoVIew(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
 
 class AvitoPasswordChangeView(SuccessMessageMixin, LoginRequiredMixin, PasswordChangeView):
+    """Класс-контроллер изменения пароля."""
     template_name = 'main/password_change.html'
     success_url = reverse_lazy('main:profile')
     success_message = 'Пароль пользователя изменен.'
 
 @login_required
 def profile(request):
+    """Функция-контроллер для просмотра страницы профиля"""
     return render(request, 'main/profile.html')
 
 
 class RegisterUserView(CreateView):
+    """Класс-контроллер для регистрации нового пользователя."""
     model = AdvUser
     template_name = 'main/register_user.html'
     form_class = RegisterUserForm
@@ -72,10 +83,12 @@ class RegisterUserView(CreateView):
 
 
 class RegisterDoneView(TemplateView):
+    """Класс-контроллер успешной регистрациию."""
     template_name = 'main/register_done.html'
 
 
 def user_activate(request, sign):
+    """Фунция-контроллер активации пользователя через письмо."""
     try:
         username = signer.unsign(sign)
     except BadSignature:
@@ -92,6 +105,11 @@ def user_activate(request, sign):
 
 
 class DeleteUserView(LoginRequiredMixin, DeleteView):
+    """Класс-контроллер удаления пользователя.
+    В методе setup() добавляем атрибут User_id,
+    который понадобится при извлечении объекта.
+    В методе post() производится выход пользователя,
+    отправка письма об удалении и само удаление."""
     model = AdvUser
     template_name = 'main/delete_user.html'
     success_url = reverse_lazy('main:index')
@@ -109,3 +127,6 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
         if not queryset:
             queryset = self.get_queryset()
         return get_object_or_404(queryset, pk=self.user_id)
+
+def by_rubric(request, pk):
+    pass

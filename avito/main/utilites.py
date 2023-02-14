@@ -6,6 +6,7 @@ from avito.settings import ALLOWED_HOSTS
 signer = Signer()
 
 def send_activation_notification(user):
+    """Функция отпраляющая пользователю user письмо для активации"""
     if ALLOWED_HOSTS:
         host = 'http://' + ALLOWED_HOSTS[0]
     else:
