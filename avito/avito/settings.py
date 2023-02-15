@@ -21,6 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
     'bootstrap4',
+    'django_cleanup',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [
@@ -95,3 +97,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'main.AdvUser'
 
 EMAIL_PORT = 1025
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+THUMBNAIL_ALIASES = {
+    '':{
+        'default': {
+            'size': (96, 96),
+            'crop': 'scale',
+        },
+    },
+}
+
+THUMBNAIL_BASEDIR = 'thumbnails'
