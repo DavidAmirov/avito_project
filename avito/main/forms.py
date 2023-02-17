@@ -79,3 +79,18 @@ class SubRubricForm(forms.ModelForm):
     class Meta:
         model = SubRubric
         fields = '__all__'
+
+
+class SearchForm(forms.Form):
+    """Форма для ввода слова, по которому будут искаться объявления"""
+    keyword = forms.CharField(required=False, max_length=20, label='')
+
+class BbForm(forms.ModelForm):
+    """Форма и связанный с ним набор форм модули объявления для добавления,
+    правки и удаления."""
+    class Meta:
+        model = Bb
+        fields = '__all__'
+        widgets = {'author': forms.HiddenInput}
+
+AIFormSet = forms.inlineformset_factory(Bb, Additionalimage, fields="__all__")

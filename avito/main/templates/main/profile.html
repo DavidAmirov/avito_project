@@ -1,4 +1,7 @@
 {% extends 'layout/basic.html' %}
+{% load thumbnail%}
+{% load static %}
+{% load bootstrap4 %}
 {% block title %}Профиль пользователя{% endblock %}
 
 {% block content %}
@@ -8,5 +11,33 @@
 {% else %}
 <p>Здраствуйте</p>
 {% endif%}
+<p><a href="{% url 'main:profile_bb_add' %}">Добавить объявление</a></p>
 <h3>Ваши объявления</h3>
+{% if bbs %}
+<ul class="list-unstyled">
+    {% for bb in bbs %}
+    <li class="media my-5 p-3 border">
+        {% url 'main:profile_bb_detail' pk=bb.pk as url %}
+        <a href="{{ url }}{{ all }}">
+        {% if bb.image %}
+        <img class="mr-3" src="{% thumbnail bb.image 'default' %}">
+        {% else %}
+        <img class="mr-3" src="{% static 'main/bg.jpg' %}">
+        {% endif %}
+        </a>
+        <div class="media-body">
+            <p>Рубрика: {{ bb.rubric }}</p>
+            <p class="text-right mt-2">
+                <a href="{% url 'main:profile_bb_change' pk=bb.pk %}">Редактировать</a></br>
+                <a href="{% url 'main:profile_bb_delete' pk=bb.pk %}">Удалить</a>
+            </p>
+            <h3><a href="{{ url }}{{ all }}">{{ bb.title }}</a></h3>
+            <div>{{ bb.content }}</div>
+            <p class="text-right font-weight-bold">{{ bb.price }} руб.</p>
+            <p class="text-right font-italic">{{ bb.created_at }}</p>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 {% endblock %}
