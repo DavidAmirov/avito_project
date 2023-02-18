@@ -165,10 +165,30 @@ def by_rubric(request, pk):
     return render(request, 'main/by_rubric.html', context)
 
 def detail(request, rubric_pk, pk):
-    """Функиця-контроллер, выводящая отдельно объявление с дополнительной иллюстрацией."""
+    """Функиця-контроллер, выводящая отдельно объявление с дополнительной иллюстрацией
+    с комментариями"""
     bb = get_object_or_404(Bb, pk=pk)
     ais = bb.additionalimage_set.all()
-    context = {'bb': bb, 'ais': ais}
+    comments = Comment.objects.filter(bb=pk, is_active=True)
+    initial = {'bb': bb.pk}
+    if request.user.is_authenticated:
+        initial['author'] = request.user.username
+        form_class = UserCommentForm
+    else:
+        initial['author'] = 'Гость'
+        form_class = GuestCommentForm
+    form = form_class(initial=initial)
+    if request.method =="POST":
+        c_form = form_class(request.POST)
+        if c_form.is_valid():
+            c_form.save()
+            messages.add_message(request, messages.SUCCESS,
+                                 'Комментарий добавлен')
+        else:
+            form = c_form
+            messages.add_message(request, messages.WARNING,
+                                 'Комментарий не добавлен')       
+    context = {'bb': bb, 'ais': ais, 'comments': comments, 'form': form}
     return render(request, 'main/detail.html', context)
 
 @login_required

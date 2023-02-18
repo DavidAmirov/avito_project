@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 
+from captcha.fields import CaptchaField
+
 from .apps import user_registered
 from .models import *
 
@@ -85,6 +87,7 @@ class SearchForm(forms.Form):
     """Форма для ввода слова, по которому будут искаться объявления"""
     keyword = forms.CharField(required=False, max_length=20, label='')
 
+
 class BbForm(forms.ModelForm):
     """Форма и связанный с ним набор форм модули объявления для добавления,
     правки и удаления."""
@@ -93,4 +96,25 @@ class BbForm(forms.ModelForm):
         fields = '__all__'
         widgets = {'author': forms.HiddenInput}
 
+
 AIFormSet = forms.inlineformset_factory(Bb, Additionalimage, fields="__all__")
+
+
+class UserCommentForm(forms.ModelForm):
+    """Форма комментария для авторизованного пользователя."""
+    class Meta:
+        model = Comment
+        exclude = ('is_active', )
+        widgets = {'bb': forms.HiddenInput,
+                   'author': forms.HiddenInput}
+
+
+class GuestCommentForm(forms.ModelForm):
+    """Форма комментария для неавторизованного пользователя."""
+    captcha = CaptchaField(label='Введите текст с картинки',
+                           error_messages={'invalid': 'Неправильный текст'})
+    class Meta:
+        model = Comment
+        exclude = ('is_active', )
+        widgets = {'bb': forms.HiddenInput,
+                   'author': forms.HiddenInput}
